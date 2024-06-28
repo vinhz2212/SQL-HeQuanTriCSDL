@@ -148,12 +148,11 @@ GROUP BY PHONGBAN.TENPB;
 
 
 --16. Truy vấn các phòng ban có nhiều hơn 1 nhân viên:
-SELECT PHONGBAN.TENPB, COUNT(NHANVIEN.MANV) AS SO_LUONG_NV
-FROM PHONGBAN, NHANVIEN
-WHERE PHONGBAN.MAPB = NHANVIEN.MAPB
-GROUP BY PHONGBAN.TENPB
-HAVING COUNT(NHANVIEN.MANV) > 1;  --- note
-
+SELECT PB.TENPB, COUNT(NV.MANV) AS SoLuongNhanVien
+FROM NHANVIEN NV
+JOIN PHONGBAN PB ON NV.MAPB = PB.MAPB
+GROUP BY PB.TENPB
+HAVING COUNT(NV.MANV) > 1;
 
 --17. Truy vấn tổng số nhân viên và lương trung bình theo giới tính, chỉ lấy những nhóm có lương trung bình lớn hơn 6 triệu:
 SELECT NHANVIEN.GIOITINH, COUNT(*) AS SO_LUONG_NV, AVG(NHANVIEN.LUONGCB * NHANVIEN.HESOLUONG) AS LUONG_TB
@@ -168,12 +167,15 @@ WHERE NHANVIEN.MANV = LUONG.MANV
 GROUP BY NHANVIEN.MANV, NHANVIEN.HOTEN;
 
 --19. Truy vấn tổng lương thưởng và phụ cấp theo phòng ban, chỉ lấy những phòng ban có tổng phụ cấp lớn hơn 500000:
-SELECT PHONGBAN.TENPB, SUM(LUONG.PHUCAP) AS TONG_PHUCAP
-FROM PHONGBAN, NHANVIEN, LUONG
-WHERE PHONGBAN.MAPB = NHANVIEN.MAPB AND NHANVIEN.MANV = LUONG.MANV
-GROUP BY PHONGBAN.TENPB
-HAVING SUM(LUONG.PHUCAP) > 500000; --note
-
+SELECT PB.TENPB, 
+    SUM(L.PHUCAP) AS TongPhuCap, 
+    SUM(L.LUONGTHUONG) AS TongLuongThuong, 
+    SUM(L.LUONGTHUONG + L.PHUCAP) AS TongLuongThuongPhuCap
+FROM LUONG L
+JOIN NHANVIEN N ON L.MANV = N.MANV
+JOIN PHONGBAN PB ON N.MAPB = PB.MAPB
+GROUP BY PB.TENPB
+HAVING SUM(L.PHUCAP) > 500000;
 
 --20. Truy vấn số lượng nhân viên theo từng năm sinh:
 SELECT YEAR(NGAYSINH) AS NAM_SINH, COUNT(*) AS SO_LUONG_NV
@@ -181,10 +183,9 @@ FROM NHANVIEN
 GROUP BY YEAR(NGAYSINH);
 
 --21. Truy vấn số lượng nhân viên theo năm sinh, chỉ lấy những năm có nhiều hơn 1 nhân viên:SELECT YEAR(NGAYSINH) AS NAM_SINH, COUNT(*) AS SO_LUONG_NV
-SELECT YEAR(NGAYSINH) AS NAM_SINH, COUNT(*) AS SO_LUONG_NV
-FROM NHANVIEN
-GROUP BY YEAR(NGAYSINH)
-HAVING COUNT(*) > 1; --note
+SELECT YEAR(N.NGAYSINH) AS NamSinh, COUNT(*) AS SoLuongNV
+FROM NHANVIEN N
+GROUP BY YEAR(N.NGAYSINH);
 
 --22. Truy vấn tổng lương (lương cơ bản + lương thưởng + phụ cấp) theo chức vụ, sắp xếp theo tổng lương giảm dần: 
 SELECT CHUCVU.TENCV, 
@@ -196,12 +197,10 @@ GROUP BY CHUCVU.TENCV
 ORDER BY TONG_LUONG DESC;
 
 --23. Truy vấn số lượng nhân viên và tổng lương cơ bản theo giới tính, chỉ lấy những nhóm có tổng lương cơ bản trên 15 triệu:
-SELECT NHANVIEN.GIOITINH, 
-       COUNT(NHANVIEN.MANV) AS SO_LUONG_NV, 
-       SUM(NHANVIEN.LUONGCB) AS TONG_LUONG_CB
-FROM NHANVIEN
-GROUP BY NHANVIEN.GIOITINH
-HAVING SUM(NHANVIEN.LUONGCB) > 15000000; --note
+SELECT NV.GIOITINH,COUNT(*) AS SoLuongNV,SUM(NV.LUONGCB) AS TongLuongCB
+FROM NHANVIEN NV
+GROUP BY NV.GIOITINH
+HAVING SUM(NV.LUONGCB) > 15000000;
 
 --24 Truy vấn tổng lương thưởng và phụ cấp của nhân viên trong mỗi phòng ban, chỉ lấy những phòng ban có tổng lương thưởng trên 1 triệu:
 SELECT PHONGBAN.TENPB, 
