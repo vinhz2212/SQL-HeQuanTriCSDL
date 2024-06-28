@@ -1,1 +1,69 @@
+USE QuanLyNhanVien;
+GO
 
+
+CREATE TABLE NHANVIEN (
+MANV char (5) PRIMARY KEY,
+HOTEN nvarchar (50),
+NGAYSINH date,
+GIOITINH bit,
+DIACHI nvarchar (100),
+MAPB char (5),
+MACV char (5),
+LUONGCB decimal,
+HESOLUONG decimal);
+GO
+
+CREATE TABLE PHONGBAN (
+MAPB char (5) PRIMARY KEY,
+TENPB nvarchar (50)
+);
+GO
+
+CREATE TABLE CHUCVU (
+MACV char (5),
+TENCV nvarchar (50)
+);
+GO
+
+CREATE TABLE LUONG (
+MANV char (5) PRIMARY KEY,
+NGAY date,
+LUONGTHUONG decimal,
+PHUCAP decimal);
+GO
+
+--PHONGBAN
+INSERT INTO PHONGBAN (MAPB, TENPB) VALUES
+('PB01', 'Phòng Kế Toán'),
+('PB02', 'Phòng Nhân Sự'),
+('PB03', 'Phòng Kỹ Thuật');
+GO
+
+--CHUCVU
+INSERT INTO CHUCVU (MACV, TENCV) VALUES
+('CV01', 'Nhân Viên'),
+('CV02', 'Trưởng Phòng'),
+('CV03', 'Giám Đốc');
+GO
+
+--NHANVIEN
+INSERT INTO NHANVIEN (MANV, HOTEN, NGAYSINH, GIOITINH, DIACHI, MAPB, MACV, LUONGCB, HESOLUONG)
+VALUES
+('NV01', 'Nguyen Van A', '1985-01-01', 1, 'Ha Noi', 'PB01', 'CV01', 5000000, 1.2),
+('NV02', 'Tran Thi B', '1990-02-02', 0, 'Hai Phong', 'PB02', 'CV02', 7000000, 1.5),
+('NV03', 'Le Van C', '1988-03-03', 1, 'Da Nang', 'PB03', 'CV03', 9000000, 2.0);
+GO
+
+--LUONG
+INSERT INTO LUONG (MANV, NGAY, LUONGTHUONG, PHUCAP)
+VALUES
+('NV01', '2023-06-01', 500000, 200000),
+('NV02', '2023-06-01', 700000, 300000),
+('NV03', '2023-06-01', 900000, 400000);
+GO
+
+select * from PHONGBAN
+select * from CHUCVU
+select * from NHANVIEN
+select * from LUONG
